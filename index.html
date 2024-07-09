@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Calculators</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .calculator {
+            display: none;
+            margin-top: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        label {
+            flex: 0 0 200px;
+        }
+        .slider-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        input[type="range"] {
+            flex: 1;
+            margin-right: 10px;
+        }
+        input[type="number"] {
+            width: 120px;
+            padding: 5px;
+            margin-left: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 20px auto;
+        }
+        .invest-button {
+            background-color: #00a86b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+        .toggle-switch {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .toggle-switch button {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .toggle-switch button.active {
+            background-color: #4285f4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Investment Calculators</h1>
+    <div class="toggle-switch">
+        <button id="sip-toggle" class="active" onclick="toggleCalculator('sip')">SIP</button>
+        <button id="lumpsum-toggle" onclick="toggleCalculator('lumpsum')">Lumpsum</button>
+        <button id="swp-toggle" onclick="toggleCalculator('swp')">SWP</button>
+    </div>
+
+    <div id="sip-calculator" class="calculator">
+        <h2>SIP Calculator</h2>
+        <div class="input-group">
+            <label for="sip-monthly-investment">Monthly investment (₹)</label>
+            <div class="slider-container">
+                <input type="range" id="sip-monthly-investment-slider" min="500" max="10000000" step="500" value="25000">
+                <input type="number" id="sip-monthly-investment" min="500" max="10000000" step="500" value="25000">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="sip-return-rate">Expected return rate (% p.a)</label>
+            <div class="slider-container">
+                <input type="range" id="sip-return-rate-slider" min="1" max="30" step="0.1" value="12">
+                <input type="number" id="sip-return-rate" min="1" max="30" step="0.1" value="12">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="sip-time-period">Time period (years)</label>
+            <div class="slider-container">
+                <input type="range" id="sip-time-period-slider" min="1" max="30" step="1" value="10">
+                <input type="number" id="sip-time-period" min="1" max="30" step="1" value="10">
+            </div>
+        </div>
+        <div id="sip-chart" class="chart"></div>
+        <div class="result">
+            <p>Invested amount: ₹<span id="sip-invested-amount"></span></p>
+            <p>Est. returns: ₹<span id="sip-est-returns"></span></p>
+        </div>
+    </div>
+
+    <div id="lumpsum-calculator" class="calculator">
+        <h2>Lumpsum Calculator</h2>
+        <div class="input-group">
+            <label for="lumpsum-investment">One-time investment (₹)</label>
+            <div class="slider-container">
+                <input type="range" id="lumpsum-investment-slider" min="1000" max="100000000" step="1000" value="1000000">
+                <input type="number" id="lumpsum-investment" min="1000" max="100000000" step="1000" value="1000000">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="lumpsum-return-rate">Expected return rate (% p.a)</label>
+            <div class="slider-container">
+                <input type="range" id="lumpsum-return-rate-slider" min="1" max="30" step="0.1" value="12">
+                <input type="number" id="lumpsum-return-rate" min="1" max="30" step="0.1" value="12">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="lumpsum-time-period">Time period (years)</label>
+            <div class="slider-container">
+                <input type="range" id="lumpsum-time-period-slider" min="1" max="30" step="1" value="10">
+                <input type="number" id="lumpsum-time-period" min="1" max="30" step="1" value="10">
+            </div>
+        </div>
+        <div id="lumpsum-chart" class="chart"></div>
+        <div class="result">
+            <p>Invested amount: ₹<span id="lumpsum-invested-amount"></span></p>
+            <p>Est. returns: ₹<span id="lumpsum-est-returns"></span></p>
+        </div>
+    </div>
+
+    <div id="swp-calculator" class="calculator">
+        <h2>SWP Calculator - Systematic Withdrawal Plan Calculator</h2>
+        <div class="input-group">
+            <label for="swp-total-investment">Total Investment (₹)</label>
+            <div class="slider-container">
+                <input type="range" id="swp-total-investment-slider" min="100000" max="100000000" step="100000" value="1000000">
+                <input type="number" id="swp-total-investment" min="100000" max="100000000" step="100000" value="1000000">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="swp-withdrawal-per-month">Withdrawal per month (₹)</label>
+            <div class="slider-container">
+                <input type="range" id="swp-withdrawal-per-month-slider" min="1000" max="1000000" step="1000" value="10000">
+                <input type="number" id="swp-withdrawal-per-month" min="1000" max="1000000" step="1000" value="10000">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="swp-expected-returns">Expected returns (% p.a)</label>
+            <div class="slider-container">
+                <input type="range" id="swp-expected-returns-slider" min="1" max="30" step="0.1" value="15">
+                <input type="number" id="swp-expected-returns" min="1" max="30" step="0.1" value="15">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="swp-tenure">Tenure (years)</label>
+            <div class="slider-container">
+                <input type="range" id="swp-tenure-slider" min="1" max="30" step="1" value="5">
+                <input type="number" id="swp-tenure" min="1" max="30" step="1" value="5">
+            </div>
+        </div>
+        <div id="swp-chart" class="chart"></div>
+        <div class="result">
+            <p>Final Value is ₹<span id="swp-final-value"></span></p>
+        </div>
+    </div>
+
+    <button class="invest-button" onclick="calculate()">CALCULATE</button>
+
+    <script>
+        let calculatorType = 'sip';
+
+        function toggleCalculator(type) {
+            calculatorType = type;
+            document.querySelectorAll('.calculator').forEach(calc => calc.style.display = 'none');
+            document.getElementById(`${type}-calculator`).style.display = 'block';
+            document.querySelectorAll('.toggle-switch button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${type}-toggle`).classList.add('active');
+            calculate();
+        }
+
+        function calculate() {
+            switch(calculatorType) {
+                case 'sip':
+                    calculateSIP();
+                    break;
+                case 'lumpsum':
+                    calculateLumpsum();
+                    break;
+                case 'swp':
+                    calculateSWP();
+                    break;
+            }
+        }
+
+        function calculateSIP() {
+            const monthlyInvestment = parseFloat(document.getElementById('sip-monthly-investment').value);
+            const returnRate = parseFloat(document.getElementById('sip-return-rate').value) / 100 / 12;
+            const timePeriod = parseFloat(document.getElementById('sip-time-period').value) * 12;
+
+            const totalInvestment = monthlyInvestment * timePeriod;
+            const futureValue = monthlyInvestment * ((Math.pow(1 + returnRate, timePeriod) - 1) / returnRate) * (1 + returnRate);
+            const estimatedReturns = futureValue - totalInvestment;
+
+            document.getElementById('sip-invested-amount').textContent = totalInvestment.toLocaleString('en-IN');
+            document.getElementById('sip-est-returns').textContent = Math.round(estimatedReturns).toLocaleString('en-IN');
+
+            updateChart('sip-chart', totalInvestment, estimatedReturns);
+        }
+
+        function calculateLumpsum() {
+            const investment = parseFloat(document.getElementById('lumpsum-investment').value);
+            const returnRate = parseFloat(document.getElementById('lumpsum-return-rate').value) / 100;
+            const timePeriod = parseFloat(document.getElementById('lumpsum-time-period').value);
+
+            const futureValue = investment * Math.pow(1 + returnRate, timePeriod);
+            const estimatedReturns = futureValue - investment;
+
+            document.getElementById('lumpsum-invested-amount').textContent = investment.toLocaleString('en-IN');
+            document.getElementById('lumpsum-est-returns').textContent = Math.round(estimatedReturns).toLocaleString('en-IN');
+
+            updateChart('lumpsum-chart', investment, estimatedReturns);
+        }
+
+        function calculateSWP() {
+            const totalInvestment = parseFloat(document.getElementById('swp-total-investment').value);
+            const withdrawalPerMonth = parseFloat(document.getElementById('swp-withdrawal-per-month').value);
+            const expectedReturns = parseFloat(document.getElementById('swp-expected-returns').value) / 100;
+            const tenure = parseFloat(document.getElementById('swp-tenure').value);
+
+            let balance = totalInvestment;
+            for (let i = 0; i < tenure * 12; i++) {
+                balance = balance * (1 + expectedReturns / 12) - withdrawalPerMonth;
+            }
+
+            const finalValue = Math.max(0, Math.round(balance));
+            document.getElementById('swp-final-value').textContent = finalValue.toLocaleString('en-IN');
+
+            updateChart('swp-chart', totalInvestment - finalValue, finalValue);
+        }
+
+        function updateChart(chartId, invested, returns) {
+            const total = invested + returns;
+            const investedPercentage = (invested / total) * 360;
+            const returnsPercentage = (returns / total) * 360;
+            document.getElementById(chartId).style.background = 
+                `conic-gradient(#4285f4 0deg ${investedPercentage}deg, #34a853 ${investedPercentage}deg 360deg)`;
+        }
+
+        // Initialize sliders and input boxes
+        const sliders = document.querySelectorAll('input[type="range"]');
+        sliders.forEach(slider => {
+            const input = document.getElementById(slider.id.replace('-slider', ''));
+            slider.addEventListener('input', function() {
+                input.value = this.value;
+                calculate();
+            });
+            input.addEventListener('input', function() {
+                slider.value = this.value;
+                calculate();
+            });
+        });
+
+        // Initial calculation
+        toggleCalculator('sip');
+    </script>
+</body>
+</html>
