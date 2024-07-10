@@ -34,6 +34,7 @@ let calculatorType = 'sip';
 
             document.getElementById('sip-invested-amount').textContent = totalInvestment.toLocaleString('en-IN');
             document.getElementById('sip-est-returns').textContent = Math.round(estimatedReturns).toLocaleString('en-IN');
+            document.getElementById('sip-total-amount').textContent = Math.round(futureValue).toLocaleString('en-IN');
 
             updateChart('sip-chart', totalInvestment, estimatedReturns);
         }
@@ -48,7 +49,7 @@ let calculatorType = 'sip';
 
             document.getElementById('lumpsum-invested-amount').textContent = investment.toLocaleString('en-IN');
             document.getElementById('lumpsum-est-returns').textContent = Math.round(estimatedReturns).toLocaleString('en-IN');
-
+            document.getElementById('lumpsum-total-amount').textContent = Math.round(futureValue).toLocaleString('en-IN');
             updateChart('lumpsum-chart', investment, estimatedReturns);
         }
 
@@ -64,6 +65,8 @@ let calculatorType = 'sip';
             }
 
             const finalValue = Math.max(0, Math.round(balance));
+            document.getElementById('swp-initial-investment').textContent = totalInvestment.toLocaleString('en-IN');
+            document.getElementById('swp-total-withdrawal').textContent = Math.round(totalWithdrawal).toLocaleString('en-IN');
             document.getElementById('swp-final-value').textContent = finalValue.toLocaleString('en-IN');
 
             updateChart('swp-chart', totalInvestment - finalValue, finalValue);
