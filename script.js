@@ -59,9 +59,11 @@ let calculatorType = 'sip';
             const expectedReturns = parseFloat(document.getElementById('swp-expected-returns').value) / 100;
             const tenure = parseFloat(document.getElementById('swp-tenure').value);
 
-            let balance = totalInvestment;
+           let balance = totalInvestment;
+            let totalWithdrawal = 0;
             for (let i = 0; i < tenure * 12; i++) {
                 balance = balance * (1 + expectedReturns / 12) - withdrawalPerMonth;
+                totalWithdrawal += withdrawalPerMonth;
             }
 
             const finalValue = Math.max(0, Math.round(balance));
