@@ -100,3 +100,17 @@
             background-color: #3498db;
             color: white;
         }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .result .total {
+            color: #27ae60;
+            font-size: 1.2em;
+        }
