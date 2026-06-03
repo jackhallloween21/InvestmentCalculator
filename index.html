@@ -48,7 +48,11 @@
                     <button onclick="document.getElementById('theme-pill').classList.toggle('expanded')" id="current-color-btn" class="theme-circle shadow-inner" style="background: var(--primary)"></button>
                     <div class="flex gap-2 ml-4 mr-2" id="theme-options"></div>
                 </div>
-                <button onclick="toggleDark()" class="p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-lg">🌓</button>
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                    <span id="theme-icon-light" class="hidden text-lg">☀️</span>
+                    <span id="theme-icon-dark" class="text-lg">🌙</span>
+                </button>
             </div>
         </div>
 
