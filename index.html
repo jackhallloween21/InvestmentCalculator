@@ -3,121 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Calculators</title>
-   <link rel= "stylesheet" href="style.css">
+    <title>Investment Calculator</title>
     <link rel="icon" href="https://i.imgur.com/jQzq7WM.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: { colors: { primary: 'var(--primary)' } }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style id="dynamic-styles">
+        :root { --primary: #6366f1; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease; }
+        
+        /* Slider Styling */
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; background: #e2e8f0; border-radius: 5px; outline: none; }
+        .dark .slider { background: #334155; }
+        .slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 22px; height: 22px; 
+            background: var(--primary); cursor: pointer; border-radius: 50%; 
+            border: 4px solid white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: 0.2s; 
+        }
+        .dark .slider::-webkit-slider-thumb { border: 4px solid #1e293b; }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .tab-active { border-bottom: 3px solid var(--primary); color: var(--primary); font-weight: 700; }
+
+        /* Expanding Theme Picker Logic */
+        .theme-container {
+            max-width: 44px;
+            transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .theme-container.expanded { max-width: 320px; }
+        
+        .theme-options {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .theme-container.expanded .theme-options {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .theme-circle { 
+            width: 24px; height: 24px; border-radius: 50%; cursor: pointer; 
+            transition: transform 0.2s; border: 2px solid transparent; flex-shrink: 0;
+        }
+        .theme-circle:hover { transform: scale(1.15); }
+        .active-ring { ring: 2px solid var(--primary); ring-offset: 2px; }
+    </style>
 </head>
-<body>
-     <div class="container">
-    <h1 align="centre">Investment Calculators</h1>
-    <div class="toggle-switch">
-        <button id="sip-toggle" class="active" onclick="toggleCalculator('sip')">SIP</button>
-        <button id="lumpsum-toggle" onclick="toggleCalculator('lumpsum')">Lumpsum</button>
-        <button id="swp-toggle" onclick="toggleCalculator('swp')">SWP</button>
-    </div>
+<body class="bg-slate-50 dark:bg-slate-950 p-4 md:p-12 text-slate-900 dark:text-slate-100 min-h-screen">
 
-    <div id="sip-calculator" class="calculator">
-        <h2>SIP Calculator</h2>
-        <div class="input-group">
-            <label for="sip-monthly-investment">Monthly investment (₹)</label>
-            <div class="slider-container">
-                <input type="range" id="sip-monthly-investment-slider" min="100" max="10000000" step="500" value="25000">
-                <input type="number" id="sip-monthly-investment" min="100" max="10000000" step="500" value="25000">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Invest<span style="color: var(--primary)">Logic</span></h1>
+                <p class="text-slate-400 text-sm font-medium">Smart Financial Planning</p>
             </div>
-        </div>
-        <div class="input-group">
-            <label for="sip-return-rate">Expected return rate (% p.a)</label>
-            <div class="slider-container">
-                <input type="range" id="sip-return-rate-slider" min="1" max="130" step="0.1" value="12">
-                <input type="number" id="sip-return-rate" min="1" max="130" step="0.1" value="12">
-            </div>
-        </div>
-        <div class="input-group">
-            <label for="sip-time-period">Time period (years)</label>
-            <div class="slider-container">
-                <input type="range" id="sip-time-period-slider" min="1" max="100" step="1" value="10">
-                <input type="number" id="sip-time-period" min="1" max="100" step="1" value="10">
-            </div>
-        </div>
-        <div id="sip-chart" class="chart"></div>
-        <div class="result">
-            <p>Invested amount: ₹<span id="sip-invested-amount"></span></p>
-            <p>Est. returns: ₹<span id="sip-est-returns"></span></p>
-            <p>Total amount: ₹<span id="sip-total-amount"></span></p>
-        </div>
-    </div>
 
-    <div id="lumpsum-calculator" class="calculator">
-        <h2>Lumpsum Calculator</h2>
-        <div class="input-group">
-            <label for="lumpsum-investment">One-time investment (₹)</label>
-            <div class="slider-container">
-                <input type="range" id="lumpsum-investment-slider" min="1000" max="100000000" step="1000" value="1000000">
-                <input type="number" id="lumpsum-investment" min="1000" max="100000000" step="1000" value="1000000">
-            </div>
-        </div>
-        <div class="input-group">
-            <label for="lumpsum-return-rate">Expected return rate (% p.a)</label>
-            <div class="slider-container">
-                <input type="range" id="lumpsum-return-rate-slider" min="1" max="130" step="0.1" value="12">
-                <input type="number" id="lumpsum-return-rate" min="1" max="130" step="0.1" value="12">
-            </div>
-        </div>
-        <div class="input-group">
-            <label for="lumpsum-time-period">Time period (years)</label>
-            <div class="slider-container">
-                <input type="range" id="lumpsum-time-period-slider" min="1" max="100" step="1" value="10">
-                <input type="number" id="lumpsum-time-period" min="1" max="100" step="1" value="10">
-            </div>
-        </div>
-        <div id="lumpsum-chart" class="chart"></div>
-        <div class="result">
-            <p>Invested amount: ₹<span id="lumpsum-invested-amount"></span></p>
-            <p>Est. returns: ₹<span id="lumpsum-est-returns"></span></p>
-             <p>Total amount: ₹<span id="lumpsum-total-amount"></span></p>
-        </div>
-    </div>
+            <div class="flex items-center gap-4">
+                <!-- Expandable Theme Picker -->
+                <div id="theme-pill" class="theme-container flex items-center bg-white dark:bg-slate-900 p-2 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <!-- Trigger Button (Current Color) -->
+                    <button onclick="toggleThemeMenu()" id="current-theme-display" class="theme-circle shadow-md ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-slate-200 dark:ring-slate-700" style="background: var(--primary)"></button>
+                    
+                    <!-- Hidden Options -->
+                    <div class="theme-options flex items-center gap-3 ml-4 mr-2">
+                        <div id="theme-presets" class="flex gap-2.5"></div>
+                        <div class="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
+                        <div class="relative flex items-center justify-center">
+                            <input type="color" id="custom-color" class="w-6 h-6 rounded-full border-none cursor-pointer p-0 bg-transparent" oninput="updateTheme(this.value)">
+                            <span class="absolute text-[10px] pointer-events-none">🎨</span>
+                        </div>
+                    </div>
+                </div>
 
-    <div id="swp-calculator" class="calculator">
-        <h2>SWP Calculator - Systematic Withdrawal Plan Calculator</h2>
-        <div class="input-group">
-            <label for="swp-total-investment">Total Investment (₹)</label>
-            <div class="slider-container">
-                <input type="range" id="swp-total-investment-slider" min="100000" max="100000000" step="100000" value="1000000">
-                <input type="number" id="swp-total-investment" min="100000" max="100000000" step="100000" value="1000000">
+                <!-- Dark Mode Toggle -->
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                    <span id="theme-icon-light" class="hidden text-lg">☀️</span>
+                    <span id="theme-icon-dark" class="text-lg">🌙</span>
+                </button>
             </div>
         </div>
-        <div class="input-group">
-            <label for="swp-withdrawal-per-month">Withdrawal per month (₹)</label>
-            <div class="slider-container">
-                <input type="range" id="swp-withdrawal-per-month-slider" min="1000" max="1000000" step="1000" value="10000">
-                <input type="number" id="swp-withdrawal-per-month" min="1000" max="1000000" step="1000" value="10000">
+
+        <!-- Main Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-slate-200 dark:shadow-none overflow-hidden border border-slate-100 dark:border-slate-800">
+            <div class="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800 px-8 pt-8">
+                <div class="flex space-x-10 text-sm uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500">
+                    <button onclick="switchTab('sip')" id="tab-sip" class="pb-4 tab-active transition-all">SIP</button>
+                    <button onclick="switchTab('lumpsum')" id="tab-lumpsum" class="pb-4 transition-all hover:opacity-70">Lumpsum</button>
+                    <button onclick="switchTab('swp')" id="tab-swp" class="pb-4 transition-all hover:opacity-70">SWP</button>
+                </div>
             </div>
-        </div>
-        <div class="input-group">
-            <label for="swp-expected-returns">Expected returns (% p.a)</label>
-            <div class="slider-container">
-                <input type="range" id="swp-expected-returns-slider" min="1" max="130" step="0.1" value="15">
-                <input type="number" id="swp-expected-returns" min="1" max="130" step="0.1" value="15">
+
+            <div class="p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+                <!-- Inputs -->
+                <div class="space-y-10">
+                    <h2 id="calc-title" class="text-2xl font-bold tracking-tight">SIP Calculator</h2>
+                    <div id="inputs-container" class="space-y-8"></div>
+                </div>
+
+                <!-- Results & Chart -->
+                <div class="bg-slate-50/80 dark:bg-slate-800/50 rounded-[2rem] p-8 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800">
+                    <div class="w-full max-w-[250px] mb-10 relative">
+                        <canvas id="resultChart"></canvas>
+                    </div>
+
+                    <div class="w-full space-y-4">
+                        <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+                            <span class="text-slate-500 dark:text-slate-400 font-medium" id="label-1">Invested Amount</span>
+                            <span class="font-bold text-xl" id="res-invested">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+                            <span class="text-slate-500 dark:text-slate-400 font-medium" id="label-2">Est. Returns</span>
+                            <span class="font-bold text-xl" style="color: var(--primary)" id="res-returns">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center p-6 rounded-2xl shadow-xl transition-all duration-500" style="background: var(--primary)">
+                            <span class="text-white/80 font-medium">Total Value</span>
+                            <span class="font-bold text-white text-2xl" id="res-total">₹0</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="input-group">
-            <label for="swp-tenure">Tenure (years)</label>
-            <div class="slider-container">
-                <input type="range" id="swp-tenure-slider" min="1" max="100" step="1" value="5">
-                <input type="number" id="swp-tenure" min="1" max="100" step="1" value="5">
-            </div>
-        </div>
-        <div id="swp-chart" class="chart"></div>
-        <div class="result">
-            <p>Initial Investment: ₹<span id="swp-initial-investment"></span></p>
-                <p>Total Withdrawal: ₹<span id="swp-total-withdrawal"></span></p>
-                <p>Final Value: ₹<span id="swp-final-value"></span></p>
         </div>
     </div>
 
-    <button class="invest-button" onclick="calculate()">CALCULATE</button>
-     </div>
-   <script src="script.js"></script>
+    <script>
+        let currentTab = 'sip';
+        let chart = null;
+        let currentPrimaryColor = localStorage.getItem('themeColor') || '#6366f1';
+
+        const presets = ['#6366f1', '#0ea5e9', '#10b981', '#a855f7', '#f97316', '#e11d48'];
+        const configs = {
+            sip: { title: "SIP Calculator", labels: ["Invested", "Returns"], inputs: [
+                { id: 'amount', label: 'Monthly Investment', min: 500, max: 1000000, step: 500, val: 25000, suffix: '₹' },
+                { id: 'rate', label: 'Expected Return Rate', min: 1, max: 30, step: 0.1, val: 12, suffix: '%' },
+                { id: 'years', label: 'Time Period', min: 1, max: 40, step: 1, val: 10, suffix: 'Yr' }
+            ]},
+            lumpsum: { title: "Lumpsum Calculator", labels: ["Invested", "Returns"], inputs: [
+                { id: 'amount', label: 'One-time Investment', min: 5000, max: 10000000, step: 5000, val: 1000000, suffix: '₹' },
+                { id: 'rate', label: 'Expected Return Rate', min: 1, max: 30, step: 0.1, val: 12, suffix: '%' },
+                { id: 'years', label: 'Time Period', min: 1, max: 40, step: 1, val: 10, suffix: 'Yr' }
+            ]},
+            swp: { title: "SWP Calculator", labels: ["Total Withdrawal", "Final Balance"], inputs: [
+                { id: 'amount', label: 'Total Investment', min: 100000, max: 50000000, step: 10000, val: 1000000, suffix: '₹' },
+                { id: 'withdrawal', label: 'Withdrawal per month', min: 1000, max: 500000, step: 500, val: 10000, suffix: '₹' },
+                { id: 'rate', label: 'Expected Returns', min: 1, max: 30, step: 0.1, val: 15, suffix: '%' },
+                { id: 'years', label: 'Tenure', min: 1, max: 30, step: 1, val: 5, suffix: 'Yr' }
+            ]}
+        };
+
+        // --- Theme Functions ---
+        function toggleThemeMenu() {
+            document.getElementById('theme-pill').classList.toggle('expanded');
+        }
+
+        function updateTheme(color) {
+            currentPrimaryColor = color;
+            document.documentElement.style.setProperty('--primary', color);
+            document.getElementById('current-theme-display').style.background = color;
+            localStorage.setItem('themeColor', color);
+            renderThemePresets();
+            if(chart) updateChart(null, null, true);
+            // Close menu after selection
+            document.getElementById('theme-pill').classList.remove('expanded');
+        }
+
+        function renderThemePresets() {
+            const container = document.getElementById('theme-presets');
+            container.innerHTML = presets.map(color => `
+                <div class="theme-circle" style="background: ${color}" onclick="updateTheme('${color}')"></div>
+            `).join('');
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcons(isDark);
+            if(chart) updateChart(null, null, true);
+        }
+
+        function updateThemeIcons(isDark) {
+            document.getElementById('theme-icon-light').classList.toggle('hidden', !isDark);
+            document.getElementById('theme-icon-dark').classList.toggle('hidden', isDark);
+        }
+
+        // --- Calculator Logic ---
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.classList.remove('tab-active'));
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+            renderInputs();
+            calculate();
+        }
+
+        function renderInputs() {
+            const container = document.getElementById('inputs-container');
+            const config = configs[currentTab];
+            document.getElementById('calc-title').innerText = config.title;
+            document.getElementById('label-1').innerText = config.labels[0];
+            document.getElementById('label-2').innerText = config.labels[1];
+            
+            container.innerHTML = config.inputs.map(input => `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center gap-4">
+                        <label class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">${input.label}</label>
+                        <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 min-w-[150px] justify-end">
+                            <input type="number" id="num-${input.id}" value="${input.val}" 
+                                class="w-full text-right font-bold bg-transparent outline-none text-lg"
+                                style="color: var(--primary)" oninput="sync('${input.id}')">
+                            <span class="ml-2 text-slate-400 font-bold text-sm">${input.suffix}</span>
+                        </div>
+                    </div>
+                    <input type="range" id="range-${input.id}" min="${input.min}" max="${input.max}" step="${input.step}" value="${input.val}" 
+                        class="slider" oninput="sync('${input.id}', true)">
+                </div>
+            `).join('');
+        }
+
+        function sync(id, fromSlider = false) {
+            const s = fromSlider ? `range-${id}` : `num-${id}`;
+            const t = fromSlider ? `num-${id}` : `range-${id}`;
+            document.getElementById(t).value = document.getElementById(s).value;
+            calculate();
+        }
+
+        function calculate() {
+            const P = parseFloat(document.getElementById('num-amount').value) || 0;
+            const r = (parseFloat(document.getElementById('num-rate').value) || 0) / 100;
+            const n = parseFloat(document.getElementById('num-years').value) || 0;
+            let v1 = 0, v2 = 0, total = 0;
+
+            if (currentTab === 'sip') {
+                const i = r / 12;
+                total = P * ((Math.pow(1 + i, n * 12) - 1) / i) * (1 + i);
+                v1 = P * n * 12;
+                v2 = total - v1;
+            } else if (currentTab === 'lumpsum') {
+                total = P * Math.pow(1 + r, n);
+                v1 = P;
+                v2 = total - v1;
+            } else if (currentTab === 'swp') {
+                const W = parseFloat(document.getElementById('num-withdrawal').value) || 0;
+                const i = r / 12;
+                v2 = P * Math.pow(1 + i, n * 12) - (W * (Math.pow(1 + i, n * 12) - 1) / i);
+                v1 = W * n * 12;
+                total = Math.max(0, v2);
+                v2 = total;
+            }
+            updateUI(v1, v2, total);
+        }
+
+        function updateUI(v1, v2, total) {
+            const fmt = (n) => "₹" + Math.round(n).toLocaleString('en-IN');
+            document.getElementById('res-invested').innerText = fmt(v1);
+            document.getElementById('res-returns').innerText = fmt(v2);
+            document.getElementById('res-total').innerText = fmt(total);
+            updateChart(v1, v2);
+        }
+
+        let lV1 = 0, lV2 = 0;
+        function updateChart(v1, v2, force = false) {
+            if (v1 !== null) lV1 = v1; if (v2 !== null) lV2 = v2;
+            const isDark = document.documentElement.classList.contains('dark');
+            const data = {
+                labels: configs[currentTab].labels,
+                datasets: [{
+                    data: [lV1, lV2],
+                    backgroundColor: [isDark ? '#334155' : '#e2e8f0', currentPrimaryColor],
+                    borderWidth: 0
+                }]
+            };
+            if (chart) {
+                chart.data = data;
+                chart.update(force ? 'default' : 'none');
+            } else {
+                chart = new Chart(document.getElementById('resultChart').getContext('2d'), {
+                    type: 'doughnut', data: data, options: { cutout: '80%', plugins: { legend: { display: false } } }
+                });
+            }
+        }
+
+        // Initialize
+        if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); updateThemeIcons(true); }
+        updateTheme(currentPrimaryColor);
+        renderThemePresets();
+        switchTab('sip');
+
+        // Close theme menu when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!document.getElementById('theme-pill').contains(e.target)) {
+                document.getElementById('theme-pill').classList.remove('expanded');
+            }
+        });
+    </script>
 </body>
 </html>
